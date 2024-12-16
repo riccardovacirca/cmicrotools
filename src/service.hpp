@@ -1,8 +1,8 @@
-#include "microdevtools.h"
+#include "cmicrotools.h"
 
 #ifdef _cplusplus
 extern "C" {
-  int HelloWorldController(mdt_service_t *s);
-  void mdt_handler(mdt_service_t *s);
+  int HelloWorldController(cm_service_t *s);
+  void cm_handler(cm_service_t *s);
 }
 #endif

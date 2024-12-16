@@ -1,6 +1,6 @@
 
-#ifndef MICRODEVTOOLS_H
-#define MICRODEVTOOLS_H
+#ifndef CMICROTOOLS_H
+#define CMICROTOOLS_H
 
 #include "apr.h"
 #include "apr_pools.h"
@@ -452,4 +452,4 @@ void cm_pdf(apr_pool_t *m, const char *s, const char *d, double w, double h);
 #ifdef __cplusplus
 }
 #endif
-#endif /* MICRODEVTOOLS_H */
+#endif /* CMICROTOOLS_H */
