@@ -22,13 +22,26 @@ else
 fi
 
 # Crea il repository usando l'API GitHub
+echo "Creating repository $REPO_NAME on GitHub..."
 curl -u "$USERNAME:$TOKEN" https://api.github.com/user/repos -d "{\"name\":\"$REPO_NAME\", \"private\":$VISIBILITY}"
 
-# Configura il repository locale
+# Verifica se la richiesta è andata a buon fine
 if [ $? -eq 0 ]; then
   echo "Repository $REPO_NAME created successfully!"
-  git remote add origin https://github.com/$USERNAME/$REPO_NAME.git
-  echo "Remote origin set to https://github.com/$USERNAME/$REPO_NAME.git"
 else
   echo "Failed to create repository $REPO_NAME."
+  exit 1
 fi
+
+# Rimuove la cartella .git e inizializza un nuovo repository locale
+if [ -d ".git" ]; then
+  echo "Removing existing .git directory..."
+  rm -rf .git
+fi
+
+echo "Initializing new Git repository..."
+git init
+git remote add origin https://github.com/$USERNAME/$REPO_NAME.git
+echo "Remote origin set to https://github.com/$USERNAME/$REPO_NAME.git"
+
+echo "Done! You can now add files, commit changes, and push to the new repository."
