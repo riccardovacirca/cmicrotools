@@ -3,9 +3,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl3 libmariadb3 libpq5 libsqlite3-0 unixodbc \
     libjson-c5 libapr1 libaprutil1 supervisor && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-COPY ./src/release/cm /usr/local/bin/cm
-COPY ./src/cm.conf /etc/supervisor/conf.d/cm.conf
-COPY ./src/supervisord.conf /etc/supervisor/supervisord.conf
+COPY ./release/cm /usr/local/bin/cm
+COPY ./etc/cm.conf /etc/supervisor/conf.d/cm.conf
+COPY ./etc/supervisord.conf /etc/supervisor/supervisord.conf
 RUN chmod +x /usr/local/bin/cm && \
     mkdir -p /var/log && touch /var/log/cm.log /var/log/cm.err.log /var/log/cm.out.log
 EXPOSE 2310 2443

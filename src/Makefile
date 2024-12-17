@@ -26,8 +26,8 @@ debug: CXXFLAGS += -g -D_DEBUG
 debug: $(DEBUG_DIR)/cm
 
 $(DEBUG_DIR)/cm: $(OBJ_C) $(OBJ_CPP)
-	@mkdir -p ../$(DEBUG_DIR)
-	$(CXX) -o ../$@ $^ $(LDFLAGS)
+	@mkdir -p /service/$(DEBUG_DIR)
+	$(CXX) -o /service/$@ $^ $(LDFLAGS)
 	@rm -f *.o
 
 %.o: %.c
@@ -37,11 +37,8 @@ $(DEBUG_DIR)/cm: $(OBJ_C) $(OBJ_CPP)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 run:
-	../$(DEBUG_DIR)/cm -h 0.0.0.0 -p 2310 -P 2443 -l cm.log
-
-repo:
-	@chmod +x repo.sh
-	./repo.sh
+	mkdir -p /service/logs
+	/service/$(DEBUG_DIR)/cm -h 0.0.0.0 -p 2310 -P 2443 -l /service/logs/cm.log
 
 clean:
 	@rm -rf ../$(DEBUG_DIR) ../$(RELEASE_DIR)
