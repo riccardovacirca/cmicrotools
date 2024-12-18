@@ -1,3 +1,17 @@
 #!/bin/bash
-docker build -f Dockerfile.dev -t cm-image .
-docker run -it --rm -v $(pwd):/service -p 2310:2310 -p 2443:2443 --name cm cm-image
+if [ -f .env ]; then
+  source .env
+else
+  echo ".env file not found! Please create one with the required parameters."
+  exit 1
+fi
+if [ -z "$REPO_NAME" ]; then
+  echo "Error: Missing REPO_NAME in .env file."
+  exit 1
+fi
+IMAGE_NAME="${REPO_NAME}-image"
+CONTAINER_NAME="${REPO_NAME}"
+echo "Building Docker image $IMAGE_NAME..."
+docker build -f Dockerfile.dev -t "$IMAGE_NAME" .
+echo "Running Docker container $CONTAINER_NAME..."
+docker run -it --rm -v $(pwd):/service -p 2310:2310 -p 2443:2443 --name "$CONTAINER_NAME" "$IMAGE_NAME"

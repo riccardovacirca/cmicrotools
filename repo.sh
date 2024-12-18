@@ -44,4 +44,19 @@ git init
 git remote add origin https://github.com/$USERNAME/$REPO_NAME.git
 echo "Remote origin set to https://github.com/$USERNAME/$REPO_NAME.git"
 
+cat > README.md <<EOF
+# ${REPO_NAME}
+
+Benvenuto nel repository ${REPO_NAME}!
+
+## Descrizione
+
+Aggiungi qui una descrizione del progetto.
+
+## Istruzioni
+
+Aggiungi qui le istruzioni per utilizzare il progetto.
+EOF
+
+echo "REPO_NAME=${REPO_NAME}" > .github/workflows/.env
 echo "Done! You can now add files, commit changes, and push to the new repository."

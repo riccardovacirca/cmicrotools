@@ -1,0 +1,41 @@
+name: CI Pipeline with Docker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout del codice sorgente
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Impostare le variabili dal file .env
+      - name: Load environment variables
+        run: |
+          if [ -f .github/workflows/.env ]; then
+            export $(grep -v '^#' .github/workflows/.env | xargs)
+          else
+            echo ".env file not found in .github/workflows! Ensure it exists."
+            exit 1
+          fi
+
+      # Step 3: Costruire l'immagine Docker utilizzando il Dockerfile
+      - name: Build Docker Image
+        run: |
+          docker build -f Dockerfile.dev -t "${{ env.REPO_NAME }}-image" .
+
+      # Step 4: Eseguire il programma di test nel container
+      - name: Run Tests in Docker Container
+        run: |
+          docker run --rm -v $(pwd):/service -w /service --name "${{ env.REPO_NAME }}" \
+          "${{ env.REPO_NAME }}-image" bash -c "
+            cd /service/src && make test && /service/test/cm
+          "
