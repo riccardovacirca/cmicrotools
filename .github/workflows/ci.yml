@@ -30,12 +30,10 @@ jobs:
       # Step 3: Costruire l'immagine Docker utilizzando il Dockerfile
       - name: Build Docker Image
         run: |
-          docker build -f Dockerfile.dev -t "${{ env.REPO_NAME }}-image" .
+          docker build -f Dockerfile.dev -t "cm-image" .
 
       # Step 4: Eseguire il programma di test nel container
       - name: Run Tests in Docker Container
         run: |
-          docker run --rm -v $(pwd):/service -w /service --name "${{ env.REPO_NAME }}" \
-          "${{ env.REPO_NAME }}-image" bash -c "
-            cd /service/src && make test && /service/test/cm
-          "
+          docker run --rm -v $(pwd):/service -w /service --name "cm" \
+          "cm-image" bash -c "cd /service/src && make test && /service/test/cm"
