@@ -1,5 +1,13 @@
 name: test
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'Dockerfile'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'Dockerfile'
 jobs:
   build:
     runs-on: ubuntu-latest
