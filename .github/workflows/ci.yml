@@ -17,23 +17,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Impostare le variabili dal file .env
+      # Step 2: Caricare variabili dal file .env
       - name: Load environment variables
         run: |
           if [ -f .github/workflows/.env ]; then
-            export $(grep -v '^#' .github/workflows/.env | xargs)
+            echo "Loading environment variables from .env"
+            cat .github/workflows/.env >> $GITHUB_ENV
           else
             echo ".env file not found in .github/workflows! Ensure it exists."
             exit 1
           fi
 
-      # Step 3: Costruire l'immagine Docker utilizzando il Dockerfile
+      # Step 3: Configurare Docker
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Step 4: Costruire l'immagine Docker
       - name: Build Docker Image
         run: |
           docker build -f Dockerfile.dev -t "cm-image" .
 
-      # Step 4: Eseguire il programma di test nel container
+      # Step 5: Eseguire il programma di test nel container
       - name: Run Tests in Docker Container
         run: |
-          docker run --rm -v $(pwd):/service -w /service --name "cm" \
+          docker run --rm -v ${{ github.workspace }}:/service -w /service --name "cm" \
           "cm-image" bash -c "cd /service/src && make test && /service/test/cm"

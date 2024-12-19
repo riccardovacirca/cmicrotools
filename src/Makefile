@@ -2,7 +2,7 @@ CC:=clang
 CXX:=clang++
 CFLAGS:=-std=gnu11 -D_MONGOOSE
 CXXFLAGS:=-std=c++14
-INCLUDES:=-I. -I /usr/include/apr-1.0 -I/usr/include/json-c
+INCLUDES:=-I. -I/usr/include/apr-1.0 -I/usr/include/json-c
 LDFLAGS:=-lapr-1 -laprutil-1 -ljson-c -lssl -lcrypto
 
 C_SRC:=mongoose.c cmicrotools.c main.c
