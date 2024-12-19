@@ -1,34 +1,23 @@
 name: test
-
 on: [push, pull_request]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: Load environment variables
-        run: |
-          if [ -f .github/workflows/.env ]; then
-            echo "Loading environment variables from .env"
-            cat .github/workflows/.env >> $GITHUB_ENV
-          else
-            echo ".env file not found in .github/workflows! Ensure it exists."
-            exit 1
-          fi
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Build Docker Image
         run: |
-          docker build -f Dockerfile.dev -t "cm-image" .
+          docker build -f Dockerfile.dev -t "test-image" .
       - name: Run Tests in Docker Container
         run: |
           docker run --rm \
           -v ${{ github.workspace }}:/service \
           -w /service \
-          --name "cm" \
-          "cm-image" \
+          --name "test-container" \
+          "test-image" \
           bash -c "
             cd /service/src &&
             make test &&
