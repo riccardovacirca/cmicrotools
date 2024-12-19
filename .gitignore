@@ -1,6 +1,4 @@
 .env
 !.github/workflows/.env
-release/
-debug/
+builds/
 logs/
-test/
