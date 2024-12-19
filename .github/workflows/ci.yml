@@ -32,5 +32,5 @@ jobs:
           bash -c "
             cd /service/src &&
             make test &&
-            /service/test/cm
+            make run-test
           "
