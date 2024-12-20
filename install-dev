@@ -5,10 +5,40 @@ else
   echo ".env file not found! Please create one with the required parameters."
   exit 1
 fi
+
 if [ -z "$REPO_NAME" ]; then
   echo "Error: Missing REPO_NAME in .env file."
   exit 1
 fi
+
+cat > README.md <<EOF
+  # ${REPO_NAME}
+EOF
+
+if [ -n "$USERNAME" ] && [ -n "$TOKEN" ]; then
+  if [ "$PRIVATE" == "private" ]; then
+    VISIBILITY=true
+  else
+    VISIBILITY=false
+  fi
+  echo "Creating repository $REPO_NAME on GitHub..."
+  curl -u "$USERNAME:$TOKEN" https://api.github.com/user/repos -d "{\"name\":\"$REPO_NAME\", \"private\":$VISIBILITY}"
+  if [ $? -eq 0 ]; then
+    echo "Repository $REPO_NAME created successfully!"
+  else
+    echo "Failed to create repository $REPO_NAME."
+    exit 1
+  fi
+  if [ -d ".git" ]; then
+    echo "Removing existing .git directory..."
+    rm -rf .git
+  fi
+  echo "Initializing new Git repository..."
+  git init
+  git remote add origin https://github.com/$USERNAME/$REPO_NAME.git
+  echo "Remote origin set to https://github.com/$USERNAME/$REPO_NAME.git"
+fi
+
 IMAGE_NAME="${REPO_NAME}-image"
 CONTAINER_NAME="${REPO_NAME}"
 echo "Building Docker image $IMAGE_NAME..."

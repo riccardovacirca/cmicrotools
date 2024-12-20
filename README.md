@@ -1,19 +1,25 @@
 # cmicrotools
-C/C++ Micorservice Tools
+C/C++ Micorservice Development Tools
 
 ## Install
 
-Clona il repository in una cartella con il nome del servizio
+Clone the repository to a folder with the name of the service
 
 ```bash
-git clone https://github.com/riccardovacirca/cmicrotools.git hello
+git clone https://github.com/riccardovacirca/cmicrotools.git hello-service
+cd hello-service && mv .env-example .env
 ```
 
-Copia il file <code>.env-example</code> in <code>.env</code> e aggiungi la
-configurazione per il repository del progetto, quindi esegui lo script bash
-<code>repo.sh</code> per creare il repository remoto  su github.com. Se non hai
-una chiave creane una dalla sezione setting di github.com
+Edit <code>.env</code>
 
 ```bash
-./repo.sh
+REPO_NAME="hello-service"
+```
+
+Add github.com credentials to <code>.env</code> to create a repository:
+
+```bash
+USERNAME="your-github-username"
+TOKEN="your-github-token"
+PRIVATE="private"
 ```
