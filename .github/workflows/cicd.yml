@@ -17,9 +17,7 @@ jobs:
         run: |
           docker run --rm \
           -v ${{ github.workspace }}:/app -w /app app-dev \
-          /bin/bash -c "
-            cd /app/src && make debug && make run & sleep 5 &&
-            chmod +x /app/test.sh && /app/test.sh"
+          /bin/bash -c "cd /app/src && make debug && /usr/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log & sleep 5 && chmod +x /app/test.sh && /app/test.sh"
   release-and-deploy-dist:
     if: "contains(github.event.head_commit.message, '.deb')"
     runs-on: ubuntu-latest
