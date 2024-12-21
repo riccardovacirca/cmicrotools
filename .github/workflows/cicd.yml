@@ -28,6 +28,11 @@ jobs:
         run: |
           docker run -v $(pwd)/app:/app app-dev /bin/bash -c "echo 'Volume montato'"
 
+      - name: Build application using make
+        # Esegue make nella cartella /app/src
+        run: |
+          docker run -v $(pwd)/app:/app app-dev make -C /app/src
+
       - name: Start application server
         # Avvia il server dell'applicazione per i test
         run: |
@@ -75,10 +80,6 @@ jobs:
         # Avvia il server dell'applicazione per i test
         run: |
           docker run -d --name app-server -v $(pwd)/app:/app -p 2310:2310 -p 2443:2443 app-prod /usr/local/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log
-
-      - name: Ensure test.sh is executable
-        # Imposta i permessi di esecuzione per test.sh
-        run: chmod +x app/test.sh
 
       - name: Run tests
         # Esegue i test utilizzando il file test.sh e interrompe in caso di fallimento
