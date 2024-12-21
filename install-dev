@@ -44,4 +44,4 @@ CONTAINER_NAME="${REPO_NAME}"
 echo "Building Docker image $IMAGE_NAME..."
 docker build -f Dockerfile.dev -t "$IMAGE_NAME" .
 echo "Running Docker container $CONTAINER_NAME..."
-docker run -it --rm -v $(pwd):/service -p 2310:2310 -p 2443:2443 --name "$CONTAINER_NAME" "$IMAGE_NAME"
+docker run -it --rm -v $(pwd):/app -p 2310:2310 -p 2443:2443 --name "$CONTAINER_NAME" "$IMAGE_NAME"

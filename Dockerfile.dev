@@ -5,5 +5,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unixodbc-dev libapr1-dev libaprutil1-dev libaprutil1-dbd-mysql \
     libaprutil1-dbd-pgsql libaprutil1-dbd-sqlite3 libjson-c-dev \
     ca-certificates && apt-get clean && rm -rf /var/lib/apt/lists/*
-WORKDIR /service
+WORKDIR /app
 CMD ["bash"]

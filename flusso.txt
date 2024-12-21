@@ -1,0 +1,41 @@
+Flusso delle procedure di CI/CD
+
+Di seguito è descritto il flusso di lavoro relativo all'esecuzione
+delle procedure di CI/CD.
+
+Questo flusso di lavoro è attivato dal push di un aggiornamento del repository
+su github e segue due distinte procedure sulla base dello stato di modifica
+di alcune cartelle del repository.
+
+In particolare vengono monitorate la cartella src e la cartella dist.
+
+La cartella src è oggetto di modifica in seguito all'aggiornamento del codice
+dell'applicazione.
+
+La modifica della cartella dist avviene in seguito alla generazione di un nuovo
+file .deb con cui l'applicazione può essere rialsciata
+
+Flusso relativo alla modifica della cartella src:
+1 - Build di Dockerfile.dev
+2 - Montaggio del volume collegato alla cartella src
+3 - Esecuzione di make
+4 - Esecuzione del set di test
+5 - Uscita
+
+Flusso relativo alla modifica della dist:
+1 - Build di Dockerfile.prod
+2 - Montaggio del volume collegato alla cartella dist
+3 - Esecuzione di apt-get install -f del file .deb di rilascio
+4 - Esecuzione del set di test
+  4.1 - Uscita in caso di fallimento dei test
+5 - Apertura connessione con il server di staging
+6 - Trasferimento del file .deb di rilascio sul server di staging
+7 - Esecuzione di apt-get install -f del file .deb di rilascio sul server di staging
+8 - Uscita
+
+scrivi un file yml per eseguire tali procedure
+il flusso relativo alla modifica della cartella src non viene eseguito in seguito
+alla modifica di dist
+nella cartella dist sono presenti tutti i file deb rilasciati
+per modifica della cartella dist si intende la presenza di un nuovo file .deb
+commenta ogni passaggio
