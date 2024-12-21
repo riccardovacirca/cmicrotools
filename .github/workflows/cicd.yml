@@ -19,7 +19,7 @@ jobs:
           -v ${{ github.workspace }}:/app -w /app app-dev \
           /bin/bash -c "
             cd /app/src && make debug && make run & sleep 5 &&
-            chmod +x /app/test.sh && /app/test.sh"
+            chmod +x /app/test.sh && /app/test.sh && echo \"Done.\""
   release-and-deploy-dist:
     if: "contains(github.event.head_commit.message, '.deb')"
     runs-on: ubuntu-latest
