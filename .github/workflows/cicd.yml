@@ -23,29 +23,10 @@ jobs:
         # Build dell'immagine Docker per sviluppo
         run: docker build -f Dockerfile.dev -t app-dev .
 
-      - name: Mount app volume
-        # Monta il volume
-        run: |
-          docker run -v ${{ github.workspace }}:/app -w /app app-dev /bin/bash -c "echo 'Volume montato'"
-
       - name: Build application using make
         # Esegue make nella cartella /app/src
         run: |
-          docker run -v ${{ github.workspace }}:/app -w /app app-dev /bin/bash -c "cd /app/src && make"
-
-      - name: Start application server
-        # Avvia il server dell'applicazione per i test
-        run: |
-          docker run -d --name app-server -v ${{ github.workspace }}:/app -w /app -p 2310:2310 -p 2443:2443 app-dev /usr/local/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log
-
-      - name: Ensure test.sh is executable
-        # Imposta i permessi di esecuzione per test.sh
-        run: chmod +x app/test.sh
-
-      - name: Run tests
-        # Esegue i test utilizzando il file test.sh e interrompe in caso di fallimento
-        run: |
-          docker exec app-server /bin/bash -c "/app/test.sh" || exit 1
+          docker run -v ${{ github.workspace }}:/app -w /app app-dev /bin/bash -c "cd /app/src && make && make run & chmod +x /app/test.sh && /app/test.sh"
 
       - name: Stop application server
         # Arresta il server dell'applicazione
