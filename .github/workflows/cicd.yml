@@ -26,17 +26,17 @@ jobs:
       - name: Mount app volume
         # Monta il volume
         run: |
-          docker run -v $(pwd)/app:/app app-dev /bin/bash -c "echo 'Volume montato'"
+          docker run -v ${{ github.workspace }}:/app -w /app app-dev /bin/bash -c "echo 'Volume montato'"
 
       - name: Build application using make
         # Esegue make nella cartella /app/src
         run: |
-          docker run -v $(pwd)/app:/app app-dev make -C /app/src
+          docker run -v ${{ github.workspace }}:/app -w /app app-dev /bin/bash -c "cd /app/src && make"
 
       - name: Start application server
         # Avvia il server dell'applicazione per i test
         run: |
-          docker run -d --name app-server -v $(pwd)/app:/app -p 2310:2310 -p 2443:2443 app-dev /usr/local/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log
+          docker run -d --name app-server -v ${{ github.workspace }}:/app -w /app -p 2310:2310 -p 2443:2443 app-dev /usr/local/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log
 
       - name: Ensure test.sh is executable
         # Imposta i permessi di esecuzione per test.sh
@@ -68,7 +68,7 @@ jobs:
       - name: Mount app volume
         # Monta il volume
         run: |
-          docker run -v $(pwd)/app:/app app-prod /bin/bash -c "echo 'Volume montato'"
+          docker run -v ${{ github.workspace }}:/app -w /app app-prod /bin/bash -c "echo 'Volume montato'"
 
       - name: Install .deb package locally
         # Trova l'ultimo file .deb e installa il pacchetto
@@ -79,7 +79,7 @@ jobs:
       - name: Start application server
         # Avvia il server dell'applicazione per i test
         run: |
-          docker run -d --name app-server -v $(pwd)/app:/app -p 2310:2310 -p 2443:2443 app-prod /usr/local/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log
+          docker run -d --name app-server -v ${{ github.workspace }}:/app -w /app -p 2310:2310 -p 2443:2443 app-prod /usr/local/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log
 
       - name: Run tests
         # Esegue i test utilizzando il file test.sh e interrompe in caso di fallimento
