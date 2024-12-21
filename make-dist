@@ -1,0 +1,74 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 <dist-version>"
+  exit 1
+fi
+
+if [ -f .env ]; then
+  source .env
+else
+  echo "Error: .env file not found! Please create one with the required parameters."
+  exit 1
+fi
+
+if [ -z "$REPO_NAME" ]; then
+  echo "Error: Missing REPO_NAME in .env file."
+  exit 1
+fi
+
+if [[ ! "$REPO_NAME" =~ ^[a-z0-9.-]+$ ]]; then
+  echo "Error: REPO_NAME must only contain lowercase letters, digits, dots (.), or hyphens (-)."
+  exit 1
+fi
+
+if [[ "$REPO_NAME" == *- ]]; then
+  echo "Error: REPO_NAME must not end with a hyphen (-)."
+  exit 1
+fi
+
+PACKAGE_NAME="$REPO_NAME"
+PACKAGE_VERSION="$1"
+EXECUTABLE_NAME="cm"
+EXECUTABLE_PATH="/usr/bin/cm"
+OUTPUT_DIR="/tmp/${PACKAGE_NAME}-package"
+DEBIAN_DIR="$OUTPUT_DIR/DEBIAN"
+BIN_DIR="$OUTPUT_DIR/usr/bin"
+
+echo "Creating package directory structure..."
+mkdir -p "$BIN_DIR"
+mkdir -p "$DEBIAN_DIR"
+
+if [ ! -f "$EXECUTABLE_PATH" ]; then
+  echo "Error: Executable not found at $EXECUTABLE_PATH."
+  exit 1
+fi
+cp "$EXECUTABLE_PATH" "$BIN_DIR/$EXECUTABLE_NAME"
+chmod +x "$BIN_DIR/$EXECUTABLE_NAME"
+
+echo "Creating control file..."
+cat > "$DEBIAN_DIR/control" <<EOL
+Package: $PACKAGE_NAME
+Version: $PACKAGE_VERSION
+Architecture: amd64
+Maintainer: $AUTHOR <$EMAIL>
+Description: $DESCRIPTION
+Depends: libc6 (>= 2.30)
+Priority: optional
+Section: utils
+Homepage: $URL
+EOL
+
+echo "Building Debian package..."
+dpkg-deb --build "$OUTPUT_DIR" >/dev/null
+
+PACKAGE_DIR=/app/dist
+PACKAGE_FILE="${PACKAGE_NAME}_${PACKAGE_VERSION}_amd64.deb"
+
+mkdir -p "$PACKAGE_DIR"
+mv "${OUTPUT_DIR}.deb" "$PACKAGE_DIR/$PACKAGE_FILE"
+
+echo "Cleaning up..."
+rm -rf "$OUTPUT_DIR"
+
+echo "Package created: $PACKAGE_FILE"
