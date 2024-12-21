@@ -1,90 +1,48 @@
 name: CI/CD Workflow
-
 on:
   push:
-    # Trigger per modifiche nella cartella src
     paths:
       - 'src/**'
-    # Trigger per nuovi file .deb nella cartella dist
       - 'dist/*.deb'
-
 jobs:
-  # Flusso per la modifica della cartella src
   build-and-test-src:
-    # Non eseguire se modifiche relative a dist
     if: "!contains(github.event.head_commit.message, '.deb')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        # Clona il repository per accedere ai file
         uses: actions/checkout@v3
-
       - name: Build Docker image for development
-        # Build dell'immagine Docker per sviluppo
         run: docker build -f Dockerfile.dev -t app-dev .
-
       - name: Build application using make
-        # Esegue make nella cartella /app/src
         run: |
-          docker run -v ${{ github.workspace }}:/app -w /app app-dev /bin/bash -c "cd /app/src && make && make run & sleep 5 && chmod +x /app/test.sh && /app/test.sh"
-
-      - name: Stop application server
-        # Arresta il server dell'applicazione
-        run: docker stop app-server
-
-  # Flusso per la modifica della cartella dist
+          docker run --rm \
+          -v ${{ github.workspace }}:/app -w /app app-dev \
+          /bin/bash -c "
+            cd /app/src && make debug && make run & sleep 5 &&
+            chmod +x /app/test.sh && /app/test.sh"
   release-and-deploy-dist:
-    # Esegui solo per modifiche relative a dist
     if: "contains(github.event.head_commit.message, '.deb')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        # Clona il repository per accedere ai file
         uses: actions/checkout@v3
-
       - name: Build Docker image for production
-        # Build dell'immagine Docker per produzione
         run: docker build -f Dockerfile.prod -t app-prod .
-
       - name: Mount app volume
-        # Monta il volume
         run: |
-          docker run -v ${{ github.workspace }}:/app -w /app app-prod /bin/bash -c "echo 'Volume montato'"
+          docker run --rm \
+            -v ${{ github.workspace }}:/app -w /app app-prod \
+            /bin/bash -c "
+              deb_file=\$(ls app/dist/*.deb | tail -n 1) &&
+              apt-get update &&
+              dpkg -i \"\$deb_file\" || apt-get install -f -y &&
+              /usr/local/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log &
+              sleep 5 &&
+              chmod +x /app/test.sh && /app/test.sh"
+        #    || exit 1 &&
+        #   echo \"$SSH_KEY\" > ssh_key &&
+        #   chmod 600 ssh_key &&
+        #   scp -i ssh_key app/dist/*.deb $STAGING_SERVER:/tmp/ &&
+        #   ssh -i ssh_key $STAGING_SERVER \"sudo dpkg -i /tmp/*.deb && sudo apt-get install -f -y\"
+        # "
 
-      - name: Install .deb package locally
-        # Trova l'ultimo file .deb e installa il pacchetto
-        run: |
-          deb_file=$(ls app/dist/*.deb | tail -n 1)
-          docker run app-prod apt-get install -f "$deb_file"
-
-      - name: Start application server
-        # Avvia il server dell'applicazione per i test
-        run: |
-          docker run -d --name app-server -v ${{ github.workspace }}:/app -w /app -p 2310:2310 -p 2443:2443 app-prod /usr/local/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log
-
-      - name: Run tests
-        # Esegue i test utilizzando il file test.sh e interrompe in caso di fallimento
-        run: |
-          docker exec app-server /bin/bash -c "/app/test.sh" || exit 1
-
-      - name: Stop application server
-        # Arresta il server dell'applicazione
-        run: docker stop app-server
-
-      - name: Connect to staging server
-        # Trasferisce il file .deb al server di staging
-        env:
-          STAGING_SERVER: ${{ secrets.STAGING_SERVER }}
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-        run: |
-          echo "$SSH_KEY" > ssh_key
-          chmod 600 ssh_key
-          scp -i ssh_key app/dist/*.deb $STAGING_SERVER:/tmp/
-
-      - name: Install .deb package on staging
-        # Installa il pacchetto sul server di staging
-        env:
-          STAGING_SERVER: ${{ secrets.STAGING_SERVER }}
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-        run: |
-          ssh -i ssh_key $STAGING_SERVER "sudo apt-get install -f /tmp/*.deb"

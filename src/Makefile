@@ -36,6 +36,10 @@ run:
 	mkdir -p $(LOG_DIR)
 	$(BUILD_DIR)/cm -h 0.0.0.0 -p 2310 -P 2443 -l $(LOG_DIR)/cm.log
 
+deb:
+	chmod +x /app/package.sh
+	/app/package.sh
+
 clean:
 	@rm -rf *.o
 
