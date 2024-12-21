@@ -26,7 +26,7 @@ jobs:
       - name: Build application using make
         # Esegue make nella cartella /app/src
         run: |
-          docker run -v ${{ github.workspace }}:/app -w /app app-dev /bin/bash -c "cd /app/src && make && make run & chmod +x /app/test.sh && /app/test.sh"
+          docker run -v ${{ github.workspace }}:/app -w /app app-dev /bin/bash -c "cd /app/src && make && make run & sleep 5 && chmod +x /app/test.sh && /app/test.sh"
 
       - name: Stop application server
         # Arresta il server dell'applicazione
