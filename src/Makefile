@@ -12,7 +12,7 @@ CPP_SRC:=service.cpp
 OBJ_C:=$(C_SRC:.c=.o)
 OBJ_CPP:=$(CPP_SRC:.cpp=.o)
 
-BUILD_DIR:=/usr/bin
+BUILD_DIR:=/app/src/build
 LOG_DIR:=/var/log
 
 all: $(BUILD_DIR)/cm
