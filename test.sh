@@ -5,3 +5,6 @@ RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
 if [ "$RESPONSE" -ne 200 ]; then
   exit 1
 fi
+
+echo "Done."
+exit 0
