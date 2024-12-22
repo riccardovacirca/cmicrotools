@@ -13,7 +13,7 @@ OBJ_C:=$(C_SRC:.c=.o)
 OBJ_CPP:=$(CPP_SRC:.cpp=.o)
 
 BUILD_DIR:=/usr/bin
-LOG_DIR:=/var/logs
+LOG_DIR:=/var/log
 
 all: $(BUILD_DIR)/cm
 
