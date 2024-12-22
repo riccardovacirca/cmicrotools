@@ -53,7 +53,7 @@ if [ -n "$USERNAME" ] && [ -n "$TOKEN" ]; then
   git checkout -b main
   echo "# $REPO_NAME" > README.md
   git add README.md
-  git commit -m "Initial commit on main branch"
+  git commit -m "initial commit"
   git push -u origin main
 
   # Create develop branch
