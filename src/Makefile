@@ -1,4 +1,3 @@
-
 CC:=clang
 CXX:=clang++
 CFLAGS:=-std=gnu11 -D_MONGOOSE

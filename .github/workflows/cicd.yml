@@ -20,4 +20,4 @@ jobs:
         run: |
           docker run --rm \
           -v ${{ github.workspace }}:/app -w /app app-dev \
-          /bin/bash -c "cd /app/src && make debug && /usr/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log & sleep 5 && chmod +x /app/test.sh && /app/test.sh"
+          /bin/bash -c "cd /app/src && make debug && /app/src/build/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log & sleep 5 && chmod +x /app/test.sh && /app/test.sh"
