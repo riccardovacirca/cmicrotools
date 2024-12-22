@@ -42,6 +42,11 @@ if [ -n "$USERNAME" ] && [ -n "$TOKEN" ]; then
   git remote add origin https://github.com/$USERNAME/$REPO_NAME.git
   echo "Remote origin set to https://github.com/$USERNAME/$REPO_NAME.git"
 
+  # Configure git user and email locally for this repository
+  echo "Configuring git user and email for this repository..."
+  git config user.name "$USERNAME"
+  git config user.email "$EMAIL"
+
   echo "Creating main and develop branches..."
 
   # Create main branch

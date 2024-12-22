@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - main
 
 jobs:
   branch-develop-job:
@@ -20,4 +21,20 @@ jobs:
         run: |
           docker run --rm \
           -v ${{ github.workspace }}:/app -w /app app-dev \
-          /bin/bash -c "cd /app/src && make debug && /app/src/build/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/logs/cm.log & sleep 5 && chmod +x /app/test.sh && /app/test.sh"
+          /bin/bash -c "cd /app/src && make test && /app/src/build/test/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/log/cm.log & sleep 10 && chmod +x /app/test.sh && /app/test.sh"
+
+  branch-main-job:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image for production
+        run: docker build -f Dockerfile.prod -t app-prod .
+
+      - name: Run container
+        run: |
+          docker run \
+          -v ${{ github.workspace }}:/app -w /app app-prod \
+          /bin/bash -c "/usr/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/log/cm.log & sleep 10 && chmod +x /app/test.sh && /app/test.sh"
