@@ -1,0 +1,3 @@
+#!/bin/bash
+mkdir -p .github/workflow && mv ci-example .github/workflow/ci.yml
+echo "Done."

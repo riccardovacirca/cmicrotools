@@ -71,4 +71,4 @@ mv "${OUTPUT_DIR}.deb" "$PACKAGE_DIR/$PACKAGE_FILE"
 echo "Cleaning up..."
 rm -rf "$OUTPUT_DIR"
 
-echo "Package created: $PACKAGE_FILE"
+echo "Done."

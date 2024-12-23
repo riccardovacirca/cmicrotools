@@ -21,7 +21,7 @@ jobs:
         run: |
           docker run --rm \
           -v ${{ github.workspace }}:/app -w /app app-dev \
-          /bin/bash -c "cd /app/src && make test && /app/src/build/test/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/log/cm.log & sleep 10 && chmod +x /app/test.sh && /app/test.sh"
+          /bin/bash -c "cd /app/src && make test && /app/src/build/test/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/log/cm.log & sleep 10 && chmod +x /app/make-test && /app/make-test"
 
   branch-main-job:
     if: github.ref == 'refs/heads/main'
@@ -37,4 +37,4 @@ jobs:
         run: |
           docker run \
           -v ${{ github.workspace }}:/app -w /app app-prod \
-          /bin/bash -c "/usr/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/log/cm.log & sleep 10 && chmod +x /app/test.sh && /app/test.sh"
+          /bin/bash -c "/usr/bin/cm -h 0.0.0.0 -p 2310 -P 2443 -l /var/log/cm.log & sleep 10 && chmod +x /app/make-test && /app/make-test"
